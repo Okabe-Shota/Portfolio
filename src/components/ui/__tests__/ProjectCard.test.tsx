@@ -31,4 +31,26 @@ describe('ProjectCard', () => {
     expect(screen.getByText('React')).toBeInTheDocument()
     expect(screen.getByText('TypeScript')).toBeInTheDocument()
   })
+
+  it('detail が無い場合は詳細ページへのリンクを表示しない', () => {
+    render(<ProjectCard project={mockProject} />)
+    expect(screen.queryByRole('link', { name: /詳細/ })).not.toBeInTheDocument()
+  })
+
+  it('detail がある場合は深掘りページへのリンクを表示する', () => {
+    const withDetail: Project = {
+      ...mockProject,
+      id: 'demo-detail',
+      detail: {
+        tagline: 'タグライン',
+        overview: '概要',
+        techStack: ['Tech'],
+        sections: [],
+        highlights: ['見どころ'],
+      },
+    }
+    render(<ProjectCard project={withDetail} />)
+    const link = screen.getByRole('link', { name: /詳細/ })
+    expect(link).toHaveAttribute('href', '#/project/demo-detail')
+  })
 })

@@ -13,6 +13,6 @@ describe('Navbar', () => {
 
   it('ロゴが表示される', () => {
     render(<Navbar />)
-    expect(screen.getByText('Shota Okabe')).toBeInTheDocument()
+    expect(screen.getByText('kajaha')).toBeInTheDocument()
   })
 })

@@ -2,7 +2,8 @@ import type {
   Project,
   ProjectStat,
   ProjectArchitecture,
-  DefenseLayer,
+  ProjectFlow,
+  ProjectBenchmark,
 } from '../../data/projects'
 import { SectionTitle } from '../ui/SectionTitle'
 
@@ -39,12 +40,13 @@ function StatGrid({ stats }: { stats: ProjectStat[] }) {
   )
 }
 
-/** レイヤー図: 依存方向つきのアーキテクチャ図（外部図ライブラリ不使用・CSS のみ） */
+/** レイヤー図 / データフロー図: 向きつきの図（外部図ライブラリ不使用・CSS のみ） */
 function ArchitectureDiagram({ arch }: { arch: ProjectArchitecture }) {
   const coreIndex = arch.layers.length - 1
+  const connector = arch.connectorLabel ?? 'depends on'
   return (
     <section className="detail-reveal py-10" style={{ animationDelay: '0.18s' }}>
-      <SectionTitle en="Architecture" ja="アーキテクチャ" />
+      <SectionTitle en={arch.title?.en ?? 'Architecture'} ja={arch.title?.ja ?? 'アーキテクチャ'} />
       {arch.caption && (
         <p className="text-fg/70 leading-relaxed max-w-3xl mb-8">{arch.caption}</p>
       )}
@@ -56,7 +58,7 @@ function ArchitectureDiagram({ arch }: { arch: ProjectArchitecture }) {
               {i > 0 && (
                 <div className="flex items-center gap-2 py-2 pl-1 text-[0.65rem] font-mono uppercase tracking-[0.2em] text-cyan-500/80">
                   <span aria-hidden="true">↓</span>
-                  <span>depends on</span>
+                  <span>{connector}</span>
                 </div>
               )}
               <div
@@ -97,30 +99,37 @@ function ArchitectureDiagram({ arch }: { arch: ProjectArchitecture }) {
   )
 }
 
-/** 多層防御: セキュリティ層を外側から内側へ段階的に見せる */
-function DefenseInDepth({ layers }: { layers: DefenseLayer[] }) {
+/** 段階フロー: 順序のある処理ステップを段階的に見せる（見出し・番号は data 駆動） */
+function StageFlow({ flow }: { flow: ProjectFlow }) {
+  const prefix = flow.badgePrefix ?? 'S'
   return (
     <section className="detail-reveal py-10" style={{ animationDelay: '0.24s' }}>
-      <SectionTitle en="Defense in Depth" ja="多層防御" />
+      <SectionTitle en={flow.title.en} ja={flow.title.ja} />
+      {flow.note && (
+        <p className="text-fg/70 leading-relaxed max-w-3xl mb-8">{flow.note}</p>
+      )}
       <div className="space-y-3">
-        {layers.map((layer, i) => (
+        {flow.steps.map((step, i) => (
           <div
-            key={layer.title}
+            key={step.title}
             className="relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] p-5 pl-6 transition-colors hover:border-purple-500/30"
           >
-            {/* 左端のアクセント（層の境界を示す） */}
+            {/* 左端のアクセント（ステップの区切りを示す） */}
             <span
               aria-hidden="true"
               className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-cyan-500 to-purple-500"
             />
             <div className="flex items-center gap-3 mb-2">
-              <span className="font-mono text-xs text-cyan-500">L{i + 1}</span>
-              <h3 className="text-base font-bold text-fg">{layer.title}</h3>
+              <span className="font-mono text-xs text-cyan-500">
+                {prefix}
+                {i + 1}
+              </span>
+              <h3 className="text-base font-bold text-fg">{step.title}</h3>
             </div>
-            <p className="text-sm text-fg/65 leading-relaxed">{layer.detail}</p>
-            {layer.items && layer.items.length > 0 && (
+            <p className="text-sm text-fg/65 leading-relaxed">{step.detail}</p>
+            {step.items && step.items.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
-                {layer.items.map(item => (
+                {step.items.map(item => (
                   <span
                     key={item}
                     className="rounded border border-white/10 bg-white/5 px-2.5 py-1 font-mono text-[0.7rem] text-fg/70"
@@ -133,6 +142,61 @@ function DefenseInDepth({ layers }: { layers: DefenseLayer[] }) {
           </div>
         ))}
       </div>
+    </section>
+  )
+}
+
+/** 性能評価: 規模別のレンダリング時間を CSS 横バーで比較する（外部チャートライブラリ不使用） */
+function BenchmarkChart({ benchmark }: { benchmark: ProjectBenchmark }) {
+  const maxMs = Math.max(...benchmark.rows.map(r => r.ms))
+  return (
+    <section className="detail-reveal py-10" style={{ animationDelay: '0.27s' }}>
+      <SectionTitle
+        en={benchmark.title?.en ?? 'Performance'}
+        ja={benchmark.title?.ja ?? '性能評価'}
+      />
+      {benchmark.caption && (
+        <p className="text-fg/70 leading-relaxed max-w-3xl mb-8">{benchmark.caption}</p>
+      )}
+      <div className="space-y-4">
+        {benchmark.rows.map(row => {
+          // 最速でもバーが視認できるよう下限を設ける
+          const pct = Math.max(6, Math.round((row.ms / maxMs) * 100))
+          return (
+            <div
+              key={row.name}
+              className="rounded-xl border border-white/10 bg-white/[0.03] p-5"
+            >
+              <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1">
+                <span className="font-mono text-sm font-bold text-fg">{row.name}</span>
+                <span className="font-mono text-lg font-black tabular-nums text-gradient-cyan-purple">
+                  {row.ms.toFixed(2)}
+                  <span className="text-xs font-normal text-fg/50"> ms</span>
+                </span>
+              </div>
+              <p className="text-xs text-fg/50 mb-3 font-mono">{row.profile}</p>
+              <div
+                className="h-2.5 w-full overflow-hidden rounded-full bg-white/5"
+                role="img"
+                aria-label={`${row.name}: 平均 ${row.ms.toFixed(2)} ミリ秒`}
+              >
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-purple-500"
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              {row.memMb != null && (
+                <p className="mt-2 font-mono text-[0.7rem] text-fg/40">
+                  ヒープ {row.memMb.toFixed(2)} MB
+                </p>
+              )}
+            </div>
+          )
+        })}
+      </div>
+      {benchmark.envNote && (
+        <p className="mt-6 font-mono text-xs text-fg/50 leading-relaxed">{benchmark.envNote}</p>
+      )}
     </section>
   )
 }
@@ -235,10 +299,8 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
           <ArchitectureDiagram arch={detail.architecture} />
         )}
 
-        {/* 多層防御（任意） */}
-        {detail.defenseLayers && detail.defenseLayers.length > 0 && (
-          <DefenseInDepth layers={detail.defenseLayers} />
-        )}
+        {/* 段階フロー（任意） */}
+        {detail.flow && detail.flow.steps.length > 0 && <StageFlow flow={detail.flow} />}
 
         {/* 技術スタック */}
         <section className="detail-reveal py-10" style={{ animationDelay: '0.18s' }}>
@@ -283,6 +345,11 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
           </section>
         )}
 
+        {/* 性能評価（任意） */}
+        {detail.benchmark && detail.benchmark.rows.length > 0 && (
+          <BenchmarkChart benchmark={detail.benchmark} />
+        )}
+
         {/* 見どころ */}
         {detail.highlights.length > 0 && (
           <section className="detail-reveal py-10" style={{ animationDelay: '0.3s' }}>
@@ -298,10 +365,10 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
           </section>
         )}
 
-        {/* 今後の課題（任意・機能としては紹介しない） */}
+        {/* 今後の実装予定 / 課題（任意・実装済み機能とは区別して見せる） */}
         {detail.futureWork && detail.futureWork.length > 0 && (
           <section className="detail-reveal py-10" style={{ animationDelay: '0.36s' }}>
-            <SectionTitle en="Known Gaps" ja="今後の課題" />
+            <SectionTitle en="Roadmap" ja="今後の実装予定" />
             <ul className="space-y-2.5">
               {detail.futureWork.map(w => (
                 <li key={w} className="flex items-start gap-3 text-fg/60 leading-relaxed">
