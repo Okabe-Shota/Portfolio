@@ -40,3 +40,25 @@ body {
     border-image: linear-gradient(135deg, #06b6d4, #a855f7) 1;
   }
 }
+
+/* 深掘りページのセクション入場アニメーション（CSS のみ・ScrollTrigger と非干渉） */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.detail-reveal {
+  animation: fadeInUp 0.55s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detail-reveal {
+    animation: none;
+  }
+}

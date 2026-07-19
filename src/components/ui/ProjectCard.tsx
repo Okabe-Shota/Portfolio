@@ -10,11 +10,9 @@ const CATEGORY_COLORS: Record<Project['category'], string> = {
   frontend: 'from-cyan-500/10 to-purple-500/20',
 }
 
-const cardClass = "card group rounded-lg border border-white/10 bg-white/5 overflow-hidden transition-all duration-300 hover:-translate-y-1"
-
-function CardInner({ project }: ProjectCardProps) {
+export function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <>
+    <article className="card group rounded-lg border border-white/10 bg-white/5 overflow-hidden hover:border-cyan-500/40 transition-all duration-300 hover:-translate-y-1">
       {/* サムネイル */}
       <div className={`h-36 bg-gradient-to-br ${CATEGORY_COLORS[project.category]} flex items-center justify-center`}>
         {project.image ? (
@@ -28,9 +26,9 @@ function CardInner({ project }: ProjectCardProps) {
 
       {/* コンテンツ */}
       <div className="p-5">
-        <h3 className="text-lg font-bold text-fg mb-2">{project.title}</h3>
-        <p className="text-base text-fg/60 mb-1">{project.description.ja}</p>
-        <p className="text-sm text-fg/40 mb-4">{project.description.en}</p>
+        <h3 className="text-base font-bold text-fg mb-2">{project.title}</h3>
+        <p className="text-sm text-fg/60 mb-1">{project.description.ja}</p>
+        <p className="text-xs text-fg/40 mb-4">{project.description.en}</p>
 
         {/* タグ */}
         <div className="flex flex-wrap gap-1 mb-4">
@@ -41,51 +39,38 @@ function CardInner({ project }: ProjectCardProps) {
           ))}
         </div>
 
-        {/* リンク表示 */}
+        {/* リンク */}
         <div className="flex gap-3 items-center">
-          {project.github ? (
-            <span className="text-sm text-fg/40 font-mono group-hover:text-cyan-400 transition-colors">
-              GitHub →
-            </span>
-          ) : (
-            <span className="text-xs text-fg/25 font-mono border border-white/10 px-2 py-0.5 rounded">
-              Private
-            </span>
+          {project.detail && (
+            <a
+              href={`#/project/${project.id}`}
+              className="text-xs font-mono text-cyan-400 hover:text-cyan-300 transition-colors font-semibold"
+              aria-label={`${project.title} の詳細を見る`}
+            >
+              詳細を見る →
+            </a>
           )}
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-fg/50 hover:text-cyan-400 transition-colors font-mono"
+            aria-label="GitHub"
+          >
+            GitHub →
+          </a>
           {project.demo && (
             <a
               href={project.demo}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-fg/50 hover:text-purple-400 transition-colors font-mono"
-              onClick={e => e.stopPropagation()}
+              className="text-xs text-fg/50 hover:text-purple-400 transition-colors font-mono"
             >
               Demo →
             </a>
           )}
         </div>
       </div>
-    </>
-  )
-}
-
-export function ProjectCard({ project }: ProjectCardProps) {
-  if (project.github) {
-    return (
-      <a
-        href={project.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`${cardClass} hover:border-cyan-500/40 block`}
-      >
-        <CardInner project={project} />
-      </a>
-    )
-  }
-
-  return (
-    <article className={`${cardClass} border-white/10 cursor-default`}>
-      <CardInner project={project} />
     </article>
   )
 }
