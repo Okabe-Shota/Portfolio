@@ -226,7 +226,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
             ← Works に戻る
           </a>
           <a href="#" className="text-lg font-bold font-mono text-gradient-cyan-purple">
-            kajaha
+            AiLink CTO 岡部翔太
           </a>
         </nav>
       </header>

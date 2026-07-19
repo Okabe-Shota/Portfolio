@@ -34,7 +34,7 @@ export function Navbar() {
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="text-lg font-bold font-mono text-gradient-cyan-purple"
         >
-          kajaha
+          AiLink CTO 岡部翔太
         </button>
         <ul className="flex gap-8">
           {NAV_ITEMS.map(item => (

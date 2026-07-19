@@ -11,7 +11,7 @@ export type Profile = {
 }
 
 export const profile: Profile = {
-  name: 'kajaha',
+  name: 'AiLink CTO 岡部翔太',
   catchcopy: {
     ja: 'データ × コード × 設計',
     en: 'Data × Code × Design',

@@ -1,0 +1,229 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - navigation [ref=e5]:
+        - link "← Works に戻る" [ref=e6] [cursor=pointer]:
+          - /url: "#works"
+        - link "AiLink CTO 岡部翔太" [ref=e7] [cursor=pointer]:
+          - /url: "#"
+    - main [ref=e8]:
+      - generic [ref=e9]:
+        - paragraph [ref=e10]: Project
+        - heading "MarkKing" [level=1] [ref=e11]
+        - paragraph [ref=e12]: マインドマップによる構造俯瞰と詳細への瞬間アクセス — 文書構造を可視化し動的レンダリングする次世代 Markdown エディタ
+        - generic [ref=e13]:
+          - generic [ref=e14]: Electron
+          - generic [ref=e15]: TypeScript
+          - generic [ref=e16]: markmap
+        - link "GitHub →" [ref=e18] [cursor=pointer]:
+          - /url: https://github.com/Okabe-Shota/MarkKing
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - paragraph [ref=e21]: ライセンス
+          - paragraph [ref=e22]: MIT
+        - generic [ref=e23]:
+          - paragraph [ref=e24]: プラットフォーム
+          - paragraph [ref=e25]: デスクトップ（Electron）
+        - generic [ref=e26]:
+          - paragraph [ref=e27]: 位置づけ
+          - paragraph [ref=e28]: 学位プロジェクト（卒業研究）
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - paragraph [ref=e31]: 数字で見る
+          - heading "By the Numbers" [level=2] [ref=e32]
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - generic [ref=e37]: 12+
+            - paragraph [ref=e38]: 対応レンダリングライブラリ
+            - paragraph [ref=e39]: Adapter Pattern で統一
+          - generic [ref=e40]:
+            - generic [ref=e42]: 4段
+            - paragraph [ref=e43]: 見出し対応付けの処理フロー
+            - paragraph [ref=e44]: SCAN → DETECT → DEFINE RANGE → GENERATE MAP
+          - generic [ref=e45]:
+            - generic [ref=e47]: 0.1秒以下
+            - paragraph [ref=e48]: ノードクリック応答
+          - generic [ref=e49]:
+            - generic [ref=e51]: 0.57秒
+            - paragraph [ref=e52]: 約1万行のレンダリング平均
+            - paragraph [ref=e53]: Large ベンチ・約217KB
+          - generic [ref=e54]:
+            - generic [ref=e56]: 1,554
+            - paragraph [ref=e57]: 大規模ベンチの見出し数
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: 概要
+          - heading "Overview" [level=2] [ref=e61]
+        - paragraph [ref=e63]: 長文の Markdown は全体構造の把握が難しい。従来ツールは構造ツリー表示のみで、図表・数式を確認するにはエディタをスクロールして探し戻る必要があり、「構造俯瞰」と「詳細確認」が分断されていた。頻繁な視点移動は認知負荷を高める（特に図表の多いデータ分析レポートや技術仕様書）。MarkKing は左ペインのマインドマップで文書全体を地図として俯瞰しながら、見出しをクリックすると対応セクションの図表・数式・コードを右ペインのサイドパネルへ即座にレンダリングする。マインドマップで現在地を把握したまま詳細を確認できるため、長文でも「今どこを読んでいるか」を見失わない。学位プロジェクト（卒業研究）として開発した。
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - paragraph [ref=e66]: アーキテクチャ
+          - heading "Architecture" [level=2] [ref=e67]
+        - paragraph [ref=e69]: 見出しクリックを起点に、責務を分離した各機構がコンテンツを受け渡してレンダリングする（責務分割アーキテクチャ）。
+        - generic [ref=e70]:
+          - generic [ref=e72]:
+            - generic [ref=e73]: マインドマップ (markmap)
+            - paragraph [ref=e74]: markmap で見出し階層をツリー可視化する。ノードをクリックして、対応セクションの表示を要求する。
+            - generic [ref=e75]: NAVIGATION
+          - generic [ref=e76]:
+            - generic [ref=e77]:
+              - generic [ref=e78]: ↓
+              - generic [ref=e79]: 受け渡し
+            - generic [ref=e80]:
+              - generic [ref=e81]: MarkmapController
+              - paragraph [ref=e82]: クリックを検知し、buildHeadingContentMap を参照して対応コンテンツを特定。サイドパネルへ受け渡す。
+              - generic [ref=e83]: CONTROLLER
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - generic [ref=e86]: ↓
+              - generic [ref=e87]: 受け渡し
+            - generic [ref=e88]:
+              - generic [ref=e89]: サイドパネル機構
+              - paragraph [ref=e90]: コンテンツの種類を判定し、種類対応アダプタでハイドレーションして DOM に反映する。
+              - generic [ref=e91]: DETAIL VIEW
+        - paragraph [ref=e92]: "データの流れ: マインドマップ → MarkmapController → サイドパネル機構"
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - paragraph [ref=e95]: コア処理フロー
+          - heading "Core Pipeline" [level=2] [ref=e96]
+        - paragraph [ref=e98]: buildHeadingContentMap は 4 段階で目次マップを生成する。markmap 等の既存ライブラリには無い、見出しと内容を正確に対応付けるマッピング機能で、ノードクリック時 0.1 秒以下でコンテンツを切り出す。
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - generic [ref=e102]:
+              - generic [ref=e103]: S1
+              - heading "SCAN" [level=3] [ref=e104]
+            - paragraph [ref=e105]: 文書の全行を走査する。
+          - generic [ref=e106]:
+            - generic [ref=e108]:
+              - generic [ref=e109]: S2
+              - heading "DETECT" [level=3] [ref=e110]
+            - paragraph [ref=e111]: "# 見出し行を検出し、その階層レベルを判定する。"
+          - generic [ref=e112]:
+            - generic [ref=e114]:
+              - generic [ref=e115]: S3
+              - heading "DEFINE RANGE" [level=3] [ref=e116]
+            - paragraph [ref=e117]: 次の見出しの直前までを、その見出しの管轄範囲として確定する。
+          - generic [ref=e118]:
+            - generic [ref=e120]:
+              - generic [ref=e121]: S4
+              - heading "GENERATE MAP" [level=3] [ref=e122]
+            - paragraph [ref=e123]: 目次マップを生成する。ノードクリック時に 0.1 秒以下でコンテンツを切り出せる。
+      - generic [ref=e124]:
+        - generic [ref=e125]:
+          - paragraph [ref=e126]: 技術スタック
+          - heading "Tech Stack" [level=2] [ref=e127]
+        - generic [ref=e129]:
+          - generic [ref=e130]: Electron 36.3.1
+          - generic [ref=e131]: TypeScript 5.8.3
+          - generic [ref=e132]: Monaco Editor 0.52.2
+          - generic [ref=e133]: Marked 4.3.0
+          - generic [ref=e134]: Highlight.js 11.11.1
+          - generic [ref=e135]: markmap
+          - generic [ref=e136]: Highcharts
+          - generic [ref=e137]: KaTeX
+          - generic [ref=e138]: Mermaid
+          - generic [ref=e139]: Cytoscape.js
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - paragraph [ref=e142]: 主要機能
+          - heading "Features" [level=2] [ref=e143]
+        - generic [ref=e145]:
+          - generic [ref=e146]:
+            - heading "2 ペイン構成（NAVIGATION + DETAIL VIEW）" [level=3] [ref=e147]
+            - paragraph [ref=e148]: 左ペインはマインドマップ（NAVIGATION）。見出し階層をツリーで可視化し、ノード操作で情報粒度を調整する。右ペインはサイドパネル（DETAIL VIEW）。見出しクリックで対応セクションの図表・数式・コードを即座にレンダリングし、スクロールで「探す」手間を排除する。
+          - generic [ref=e149]:
+            - heading "State Persistence（編集後もノード開閉状態を維持）" [level=3] [ref=e150]
+            - paragraph [ref=e151]: 既存ライブラリは一時的な内部 ID でノードを管理するため、編集のたびに ID が再生成され開閉状態がリセットされる。MarkKing は「Root / 第1章 / 1.1節」のような階層パスで永続的に識別し、保存のたびにノードが閉じる現象を根本解決。編集と構造確認をシームレスに往復できる。
+          - generic [ref=e152]:
+            - heading "統一的図表ハイドレーション（Adapter Pattern）" [level=3] [ref=e153]
+            - paragraph [ref=e154]: 12 種類以上のライブラリのバラバラな API を、共通インターフェース render(element, content) で統一する。各ライブラリ用アダプタを実装し、種類に応じて動的選択する。新規ライブラリはアダプタを 1 つ追加するだけで対応でき、コアロジックは変更しない（拡張性・保守性）。
+          - generic [ref=e155]:
+            - heading "対応レンダリング（12 種類以上）" [level=3] [ref=e156]
+            - paragraph [ref=e157]: 見出しに対応した図表・数式・楽譜を、種類に応じたライブラリで動的にレンダリングする。マインドマップの基盤は markmap。
+            - list [ref=e158]:
+              - listitem [ref=e159]:
+                - generic [ref=e160]: ▸
+                - generic [ref=e161]: Highcharts（チャート）
+              - listitem [ref=e162]:
+                - generic [ref=e163]: ▸
+                - generic [ref=e164]: KaTeX（数式）
+              - listitem [ref=e165]:
+                - generic [ref=e166]: ▸
+                - generic [ref=e167]: Mermaid（ダイアグラム）
+              - listitem [ref=e168]:
+                - generic [ref=e169]: ▸
+                - generic [ref=e170]: ABC 記法（楽譜）
+              - listitem [ref=e171]:
+                - generic [ref=e172]: ▸
+                - generic [ref=e173]: Cytoscape.js（グラフ可視化）
+              - listitem [ref=e174]:
+                - generic [ref=e175]: ▸
+                - generic [ref=e176]: markmap（マインドマップ基盤）
+      - generic [ref=e177]:
+        - generic [ref=e178]:
+          - paragraph [ref=e179]: 性能評価
+          - heading "Performance" [level=2] [ref=e180]
+        - paragraph [ref=e182]: 見出しとチャートを大量に含む Markdown を 3 段階の規模で実測。約 1 万行の大規模ファイルでも平均約 0.57 秒でレンダリングする実用速度を確認した。
+        - generic [ref=e183]:
+          - generic [ref=e184]:
+            - generic [ref=e185]:
+              - generic [ref=e186]: Small
+              - generic [ref=e187]: 97.84 ms
+            - paragraph [ref=e188]: 約1,000行 / 21.52KB / 見出し154 / チャート91
+            - 'img "Small: 平均 97.84 ミリ秒" [ref=e189]'
+            - paragraph [ref=e191]: ヒープ 170.11 MB
+          - generic [ref=e192]:
+            - generic [ref=e193]:
+              - generic [ref=e194]: Medium
+              - generic [ref=e195]: 305.82 ms
+            - paragraph [ref=e196]: 約5,000行 / 108.37KB / 見出し776 / チャート491
+            - 'img "Medium: 平均 305.82 ミリ秒" [ref=e197]'
+            - paragraph [ref=e199]: ヒープ 262.54 MB
+          - generic [ref=e200]:
+            - generic [ref=e201]:
+              - generic [ref=e202]: Large
+              - generic [ref=e203]: 565.68 ms
+            - paragraph [ref=e204]: 約10,000行 / 217.51KB / 見出し1,554 / チャート991
+            - 'img "Large: 平均 565.68 ミリ秒" [ref=e205]'
+            - paragraph [ref=e207]: ヒープ 425.29 MB
+        - paragraph [ref=e208]: "評価環境: Windows 11 / Core i7-11700 / 32GB / Electron 36.3.1 / Node.js 22.15.21。数値はレンダリング時間の平均、ヒープはヒープ実測値。一般的な 8GB 以上の PC で快適動作する。"
+      - generic [ref=e209]:
+        - generic [ref=e210]:
+          - paragraph [ref=e211]: 見どころ
+          - heading "Highlights" [level=2] [ref=e212]
+        - list [ref=e214]:
+          - listitem [ref=e215]:
+            - generic [ref=e216]: ◆
+            - generic [ref=e217]: buildHeadingContentMap — markmap 等の既存ライブラリには無い、見出しと内容の正確な対応付け（ノードクリック 0.1 秒以下で切り出し）
+          - listitem [ref=e218]:
+            - generic [ref=e219]: ◆
+            - generic [ref=e220]: State Persistence — 階層パスによる永続的識別で、編集のたびにノードが閉じる問題を根本解決
+          - listitem [ref=e221]:
+            - generic [ref=e222]: ◆
+            - generic [ref=e223]: 責務分割アーキテクチャ — MarkmapController と サイドパネル機構に責務を分離
+          - listitem [ref=e224]:
+            - generic [ref=e225]: ◆
+            - generic [ref=e226]: Adapter Pattern による統一的ハイドレーション — 12 種類以上のライブラリを render(element, content) で統一し、新規追加はアダプタ 1 つ
+          - listitem [ref=e227]:
+            - generic [ref=e228]: ◆
+            - generic [ref=e229]: 約 1 万行の大規模ファイルでも平均約 0.57 秒でレンダリングする実用速度（実測）
+      - generic [ref=e230]:
+        - generic [ref=e231]:
+          - paragraph [ref=e232]: 今後の実装予定
+          - heading "Roadmap" [level=2] [ref=e233]
+        - list [ref=e235]:
+          - listitem [ref=e236]:
+            - generic [ref=e237]: ○
+            - generic [ref=e238]: "Phase 1: ブックマーク機能"
+          - listitem [ref=e239]:
+            - generic [ref=e240]: ○
+            - generic [ref=e241]: "Phase 1: エクスポート機能（PDF / HTML）"
+          - listitem [ref=e242]:
+            - generic [ref=e243]: ○
+            - generic [ref=e244]: "Phase 2: 協調編集"
+          - listitem [ref=e245]:
+            - generic [ref=e246]: ○
+            - generic [ref=e247]: "Phase 2: AI によるセクション要約"
+      - link "← Works 一覧に戻る" [ref=e249] [cursor=pointer]:
+        - /url: "#works"
+  - contentinfo [ref=e250]: © 2026 AiLink CTO 岡部翔太 — Built with React + GSAP

@@ -47,7 +47,7 @@ export default function App() {
       <>
         <ProjectDetail project={detailProject} />
         <footer className="text-center py-8 text-fg/20 text-xs font-mono border-t border-white/5 bg-bg">
-          © {new Date().getFullYear()} kajaha — Built with React + GSAP
+          © {new Date().getFullYear()} AiLink CTO 岡部翔太 — Built with React + GSAP
         </footer>
       </>
     )
@@ -64,7 +64,7 @@ export default function App() {
         <Contact />
       </main>
       <footer className="text-center py-8 text-fg/20 text-xs font-mono border-t border-white/5">
-        © {new Date().getFullYear()} kajaha — Built with React + GSAP
+        © {new Date().getFullYear()} AiLink CTO 岡部翔太 — Built with React + GSAP
       </footer>
     </>
   )
